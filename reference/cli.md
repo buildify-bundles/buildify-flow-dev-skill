@@ -42,8 +42,8 @@ TTY 下直接 `buildify config set-key api_key` 会打印获取步骤并用隐�
 | `key test` | 校验密钥并回显工作区 |
 | `bundle list [-k keyword]` | 可用 bundle。需求对应的包不在列表里 → 停止编排，请用户用 buildify-bundle-dev 实现并发布后再继续 |
 | `bundle nodes -b NAME [-V ver]` | 节点目录（已展平 `groups_json[].nodes` + `nodes_json`，含 `icon` / `label` / `isTrigger`）。目录 `summary` 是类型通用简述，**不要**直接当作画布文案 |
-| `bundle node-properties -b NAME -n NodeName` | 表单 schema → `data.parameters`；同时带回 `icon` / `label` / `summary` / `isTrigger` / **`uiComponent`**。按组件写表达式：JSON `={{ }}`，SQL `#{}` `${}`，文本 `{{ }}`。画布 `data.summary` 仍按本流程职责自写，且 ≤8 字 |
-| `bundle node-relations -b NAME -n NodeName` | 出口 relation 整份对象 → `edges[].data.relations[]`（`name`/`label`/`description`，自定义关系还有 `icon`/`_id`） |
+| `bundle node-properties -b NAME -n NodeName` | 表单 schema → `data.parameters`；同时带回 `icon` / `label` / `summary` / `isTrigger` / **`uiComponent`**。按组件写表达式：JSON 整段 `"=` + `{{ }}`（禁止 `this is ={{msg.xxx}}`），SQL `#{}` `${}`，文本 `{{ }}`。画布 `data.summary` 仍按本流程职责自写，且 ≤8 字 |
+| `bundle node-relations -b NAME -n NodeName` | 出口 relation 整份对象 → `edges[].data.relations[]`（`name`/`label`/`description`，自定义关系还有 `icon`/`_id`）。同一 source+target 一条边，多个出口接到同一下游时放进同一数组 |
 | `bundle doc -b NAME` | README Markdown |
 | `bundle cred-types / cred-properties` | 凭证类型与表单。创建凭证前用它们列出参数 |
 | `project list / create / get` | 项目。`list` 后必须把 **projectName**（及 remark）列给用户确认，禁止自行挑一个存放 |
@@ -52,7 +52,7 @@ TTY 下直接 `buildify config set-key api_key` 会打印获取步骤并用隐�
 | `project workers -p ID [--online-only]` | 创建流程和试跑需要 workerId。对用户列出 **workerName — 描述 — 在线/离线**（`remark` 为空则「无描述」），不要展示 hostname |
 | `flow list / create` | 流程 |
 | `flow get-draft / save-draft` | 草稿；save-draft 自动先读 `version` |
-| `flow validate -p ID -f flow.json` | 无副作用语义校验 |
+| `flow validate -p ID -f flow.json` | 无副作用语义校验。把表单 ERROR 按节点 id 汇总写入画布 `errors`（通过 `{}`，未通过如 `{"n-k7mX2pL9":1}`） |
 | `flow test-run -p ID -f flow.json --worker wkr_…` | 阻塞直到完成或超时 |
 | `flow cancel-test --execution-id … --worker …` | 取消试跑 |
 | `flow deploy -p ID -w WF --worker wkr_… [--version-name v1.0.0] [--remark 说明] [--wait]` | 发布已 save-draft 的草稿。发布前请用户确认版本号和发布说明。不要再传 `-f` |
@@ -65,8 +65,9 @@ TTY 下直接 `buildify config set-key api_key` 会打印获取步骤并用隐�
 
 ```bash
 until buildify --json flow validate -p "$PROJ" -f ./flow.json; do
-  # 读 issues，改 flow.json
+  # 读 issues，按节点 id 汇总写入 JSON 顶层 errors（如 {"n-k7mX2pL9":1}），改 data.parameters
 done
+# valid=true 时写入 "errors": {}
 buildify --json flow save-draft -p "$PROJ" -w "$WF" -f ./flow.json
 buildify --json flow test-run -p "$PROJ" -f ./flow.json --worker "$WKR" --timeout 60
 buildify --json flow deploy -p "$PROJ" -w "$WF" --worker "$WKR" \

@@ -2,12 +2,13 @@
 
 Markdown 便签，**不执行、不连线**。权威正文是 `parameters.commentMarkdown` 字符串，不要写成 HTML。不要和 `type: "text"` 的 TextNode 搞混。
 
-**默认不加。** 何时才加、坐标，见 [flow-json.md](flow-json.md)「批注节点」。下面只列写入画布时要用的字段。
+**默认不加。** 何时才加、坐标随流程 `direction`，见 [flow-json.md](flow-json.md)「批注节点」。下面只列写入画布时要用的字段。
 
 ## 必写字段
 
 | 字段 | 取值 |
 |---|---|
+| `id` | **`n-` + nanoid**，与执行节点同一套规则，本流程内唯一 |
 | `type` | `"comment"`（旧数据可能是 `"notes"`，读写同等对待） |
 | `zIndex` | `2` |
 | `style` | `{ "width": "280px", "height": "160px" }`（可按字数略调，约 180×88 起） |
@@ -20,6 +21,7 @@ Markdown 便签，**不执行、不连线**。权威正文是 `parameters.commen
 | `data.autoEdit` | 已有正文时 `false` 或省略 |
 
 不要写 `bundleName` / `bundleVersion` / `credentials`，不要出现在任何 `edges` 里。
+不要用批注当分组框；分组见 [flow-json.md](flow-json.md)「节点分组」，组内组件写 `parentNode`。
 
 ## parameters
 

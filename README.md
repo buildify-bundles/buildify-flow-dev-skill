@@ -9,9 +9,10 @@ Cursor / Claude Code Agent Skill：用已安装的 Bundle 节点编排 Buildify 
 | 文件 | 内容 |
 |---|---|
 | `SKILL.md` | 主入口：编排清单、项目/服务器/凭证点选、发布摘要 |
+| `install.md` | 把本 skill 装到各客户端 skills 目录 |
 | `reference/cli.md` | `buildify` CLI 命令与退出码 |
-| `reference/flow-json.md` | 画布 JSON 结构、竖排、边 relation、批注 |
-| `reference/expressions.md` | 按组件写表达式：JSON `={{ }}`、SQL `#{}` `${}`、文本 `{{ }}` |
+| `reference/flow-json.md` | 画布 JSON：`n-` + nanoid、`errors`、`direction`（TB/LR）、分组、边 relation、批注 |
+| `reference/expressions.md` | 按组件写表达式：JSON 整段以 `=` 开头、SQL `#{}` `${}`、文本 `{{ }}`；JS 节点分段注释 |
 | `reference/recipes.md` | 常见骨架 |
 | `reference/comment-node.md` | 批注节点字段 |
 
@@ -46,4 +47,4 @@ buildify --json key test
 
 ## 使用
 
-对话里提到编排流程、发布 flow、批注节点，或显式 `/buildify-flow-dev` 即可触发。
+对话里提到编排流程、发布 flow、批注、节点分组、横排/竖排、连线标签，或显式 `/buildify-flow-dev` 即可触发。
